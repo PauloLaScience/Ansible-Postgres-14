@@ -1,0 +1,23 @@
+- name: Install Postgres 10
+  hosts: all
+  tasks:
+    - name: install the pgdg rpm from a remote repo
+      yum:
+        name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
+    - name: install postgresql server
+      yum:
+          name: "{{ packages }}"
+      vars:
+          packages:
+          - postgresql10-server
+    - name: initialize postgresql cluster
+      shell: /usr/pgsql-10/bin/postgresql-10-setup initdb
+    - name: enable service Postgres 10
+      systemd:
+        name: postgresql-10
+        enabled: yes
+    - name: starting Postgres 10
+      systemd:
+        name: postgresql-10
+        state: started
