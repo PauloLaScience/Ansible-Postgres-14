@@ -1,0 +1,23 @@
+- name: Install Postgres 9.5
+  hosts: all
+  tasks:
+    - name: install the pgdg rpm from a remote repo
+      yum:
+        name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
+    - name: install postgresql server
+      yum:
+          name: "{{ packages }}"
+      vars:
+          packages:
+          - postgresql95-server
+    - name: initialize postgresql cluster
+      shell: /usr/pgsql-9.5/bin/postgresql95-setup initdb
+    - name: enable service Postgres 9.5
+      systemd:
+        name: postgresql-9.5
+        enabled: yes
+    - name: starting Postgres 9.5
+      systemd:
+        name: postgresql-9.5
+        state: started
