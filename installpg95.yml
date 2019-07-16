@@ -11,8 +11,21 @@
       vars:
           packages:
           - postgresql95-server
+    - name: Create Postgres data directory
+      file:
+        path: "{{ postgres_data_dir }}"
+        state: directory
+        owner: postgres
     - name: initialize postgresql cluster
-      shell: /usr/pgsql-9.5/bin/postgresql95-setup initdb
+      shell: /usr/pgsql-9.5/bin/postgresql95-setup initdb --pgdata="{{ postgres_data_dir }}" --data-checksums
+    - name: Modify Postgres 9.5 service to adapt pgdata
+      file:
+        path: /etc/systemd/system/postgresql-95.service.d
+        state: directory
+    - name: add systemd override
+      template:
+        src: templates/override.conf
+        dest: /etc/systemd/system/postgresql-95.service.d/override.conf
     - name: enable service Postgres 9.5
       systemd:
         name: postgresql-9.5
