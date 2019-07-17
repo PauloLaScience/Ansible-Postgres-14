@@ -17,10 +17,12 @@
         state: directory
         owner: postgres
     - name: initialize postgresql cluster
-      shell: /usr/pgsql-9.5/bin/postgresql95-setup initdb
+      shell: /usr/pgsql-9.5/bin/initdb
+      become: yes
+      become_user: postgres
       environment:
         PGDATA: "{{ postgres_data_dir }}"
-        PGSETUP_INITDB_OPTIONS: --data-checksums
+        PGSETUP_INITDB_OPTIONS: "--data-checksums"
     - name: Modify Postgres 9.5 service to adapt pgdata
       file:
         path: /etc/systemd/system/postgresql-95.service.d
