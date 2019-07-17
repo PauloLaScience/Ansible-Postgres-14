@@ -40,3 +40,7 @@
       systemd:
         name: postgresql-9.5
         state: started
+    - name: check if Postgres is ready
+      shell: /usr/pgsql-9.5/bin/pg_isready --dbname=postgres --username=postgres
+      register: pg_result
+      failed_when: "'no response' in pg_result.stdout"
