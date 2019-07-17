@@ -16,31 +16,42 @@
         path: "{{ postgres_data_dir }}"
         state: directory
         owner: postgres
+
+    - name: Check if PGDATA is empty
+      find:
+        paths: "{{ postgres_data_dir }}"
+        file_type: directory
+        patterns: "*"
+      register: dir_files
+
     - name: initialize postgresql cluster
       shell: /usr/pgsql-9.5/bin/initdb
       become: yes
       become_user: postgres
+      when: dir_files.matched|int == 0
       environment:
         PGDATA: "{{ postgres_data_dir }}"
         PGSETUP_INITDB_OPTIONS: "--data-checksums"
     - name: Modify Postgres 9.5 service to adapt pgdata
+      become: yes
       file:
-        path: /etc/systemd/system/postgresql-95.service.d
+        path: /etc/systemd/system/postgresql-9.5.service.d
         state: directory
     - name: add systemd override
+      become: yes
       template:
         src: templates/override.conf
-        dest: /etc/systemd/system/postgresql-95.service.d/override.conf
-    - name: enable service Postgres 9.5
+        dest: /etc/systemd/system/postgresql-9.5.service.d/override.conf
+    - name: starting Postgres 9.5
       systemd:
         daemon_reload: yes
         name: postgresql-9.5
-        enabled: yes
-    - name: starting Postgres 9.5
-      systemd:
-        name: postgresql-9.5
         state: started
+        enabled: yes
+
     - name: check if Postgres is ready
       shell: /usr/pgsql-9.5/bin/pg_isready --dbname=postgres --username=postgres
       register: pg_result
       failed_when: "'no response' in pg_result.stdout"
+    - debug:
+        var: pg_result
