@@ -1,0 +1,5 @@
+---
+# file: roles/pg10/vars/main.yml
+# # this will absolutely be used in this role
+packages: postgresql10-server
+
