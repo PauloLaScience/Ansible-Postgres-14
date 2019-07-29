@@ -1,0 +1,6 @@
+- name: Install Postgres 10
+  hosts: all
+
+  roles:
+    - pgdg
+    - pg10 
