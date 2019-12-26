@@ -1,0 +1,57 @@
+- name: Install Postgres 12
+  hosts: all
+  tasks:
+    - name: install the pgdg rpm from a remote repo
+      yum:
+        name: https://download.postgresql.org/pub/repos/yum/reporpms/F-31-x86_64/pgdg-fedora-repo-latest.noarch.rpm
+        state: present
+    - name: install postgresql server
+      yum:
+          name: "{{ packages }}"
+      vars:
+          packages:
+          - postgresql12-server
+    - name: Create Postgres data directory
+      file:
+        path: "{{ postgres_data_dir }}"
+        state: directory
+        owner: postgres
+
+    - name: Check if PGDATA is empty
+      find:
+        paths: "{{ postgres_data_dir }}"
+        file_type: directory
+        patterns: "*"
+      register: dir_files
+
+    - name: initialize postgresql cluster
+      shell: /usr/pgsql-12/bin/initdb
+      become: yes
+      become_user: postgres
+      when: dir_files.matched|int == 0
+      environment:
+        PGDATA: "{{ postgres_data_dir }}"
+        PGSETUP_INITDB_OPTIONS: "--data-checksums"
+    - name: Modify Postgres 12 service to adapt pgdata
+      become: yes
+      file:
+        path: /etc/systemd/system/postgresql-12.service.d
+        state: directory
+    - name: add systemd override
+      become: yes
+      template:
+        src: templates/override.conf
+        dest: /etc/systemd/system/postgresql-12.service.d/override.conf
+    - name: starting Postgres 10
+      systemd:
+        daemon_reload: yes
+        name: postgresql-12
+        state: started
+        enabled: yes
+
+    - name: check if Postgres is ready
+      shell: /usr/pgsql-12/bin/pg_isready --dbname=postgres --username=postgres
+      register: pg_result
+      failed_when: "'no response' in pg_result.stdout"
+    - debug:
+        var: pg_result
