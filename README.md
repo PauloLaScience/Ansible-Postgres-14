@@ -17,6 +17,12 @@ ansible-playbook instwrolespg10.yml -i tests/inventory.txt --user=osboxes --extr
 
 Pls note, this is the old syntax for using roles. New syntax coming soon.
 
+You can also test with vagrant and libvirt if it's installed
+Just run:
+```
+vagrant up
+```
+
 ## About
 Additional ressource now available:
 
