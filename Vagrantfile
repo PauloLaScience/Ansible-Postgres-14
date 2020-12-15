@@ -9,6 +9,9 @@ Vagrant.configure(2) do |config|
     end
     config.vm.provision "ansible" do |ansible|
         ansible.playbook = "installpg10.yml"
+	ansible.extra_vars = {
+		postgres_data_dir: "/var/lib/pgsql/10/data"	
+	}
     end
 end
 
