@@ -1,18 +1,20 @@
 - name: Install Postgres 13
   hosts: all
-  become: yes
   tasks:
     - name: install the pgdg rpm from a remote repo
+      become: yes
       yum:
         name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm 
         state: present
     - name: install postgresql server
+      become: yes
       yum:
           name: "{{ packages }}"
       vars:
           packages:
           - postgresql13-server
     - name: Create Postgres data directory
+      become: yes
       file:
         path: "{{ postgres_data_dir }}"
         state: directory
@@ -26,13 +28,13 @@
       register: dir_files
 
     - name: initialize postgresql cluster
-      shell: /usr/pgsql-13/bin/initdb
+      shell: /usr/pgsql-13/bin/initdb -E UTF8
       become: yes
       become_user: postgres
       when: dir_files.matched|int == 0
       environment:
         PGDATA: "{{ postgres_data_dir }}"
-        PGSETUP_INITDB_OPTIONS: "--data-checksums"
+        PGSETUP_INITDB_OPTIONS: "--data-checksums --encoding='UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8'"
     - name: Modify Postgres 13 service to adapt pgdata
       become: yes
       file:
@@ -44,6 +46,7 @@
         src: templates/override.conf
         dest: /etc/systemd/system/postgresql-13.service.d/override.conf
     - name: starting Postgres 13
+      become: yes
       systemd:
         daemon_reload: yes
         name: postgresql-13
