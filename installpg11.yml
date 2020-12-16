@@ -1,5 +1,6 @@
 - name: Install Postgres 11
   hosts: all
+  become: yes
   tasks:
     - name: install the pgdg rpm from a remote repo
       yum:
