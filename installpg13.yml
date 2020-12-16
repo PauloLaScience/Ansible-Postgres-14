@@ -28,13 +28,13 @@
       register: dir_files
 
     - name: initialize postgresql cluster
-      shell: /usr/pgsql-13/bin/initdb -E UTF8
+      shell: /usr/pgsql-13/bin/initdb -k
       become: yes
       become_user: postgres
       when: dir_files.matched|int == 0
       environment:
         PGDATA: "{{ postgres_data_dir }}"
-        PGSETUP_INITDB_OPTIONS: "--data-checksums --encoding='UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8'"
+        LC_ALL: "en_US.UTF-8"
     - name: Modify Postgres 13 service to adapt pgdata
       become: yes
       file:
