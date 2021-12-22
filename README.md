@@ -1,6 +1,6 @@
-# Ansible-Postgres-10
+# Ansible-Postgres-13
 ## Description
-Ansible project to deploy and upgrade Postgresql 10
+Ansible project to deploy and upgrade Postgresql 13
 
 ## Sample
 Run this after installing 2 targets centos7 from [osboxes.org](https://www.osboxes.org)
@@ -22,6 +22,8 @@ Just run:
 ```
 vagrant up
 ```
+## Older versions
+You will find some old versions starting from 10 first version supported of PostgreSQL
 
 ## About
 Additional ressource now available:
