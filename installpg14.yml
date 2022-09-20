@@ -12,7 +12,7 @@
           name: "{{ packages }}"
       vars:
           packages:
-          - postgresql13-server
+          - postgresql14-server
     - name: Create Postgres data directory
       become: yes
       file:
