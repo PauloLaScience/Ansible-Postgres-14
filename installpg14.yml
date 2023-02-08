@@ -35,7 +35,7 @@
       environment:
         PGDATA: "{{ postgres_data_dir }}"
         LC_ALL: "en_US.UTF-8"
-    - name: Modify Postgres 13 service to adapt pgdata
+    - name: Modify Postgres 14 service to adapt pgdata
       become: yes
       file:
         path: /etc/systemd/system/postgresql-14.service.d
