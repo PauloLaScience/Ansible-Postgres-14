@@ -1,6 +1,6 @@
-# Ansible-Postgres-14
+# Ansible-Postgres-15
 ## Description
-Ansible project to deploy and upgrade Postgresql 14
+Ansible project to deploy and upgrade Postgresql 15
 
 ## Sample
 Run this after installing 2 targets centos7 from [osboxes.org](https://www.osboxes.org)
